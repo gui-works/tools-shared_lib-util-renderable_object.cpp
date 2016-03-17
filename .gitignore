@@ -1,0 +1,11 @@
+build/
+.DS_Store
+*.pb.h
+*.pb.cc
+*.pbf
+*.swp
+*.pyc
+.vim-bookmarks
+*.json
+*.afdesign
+.ycm_extra_conf.py
