@@ -19,25 +19,28 @@ if(APPLE)
     option(GLFW_USE_RETINA "use retina" ON)
 endif()
 
+# Eigen3
+include_directories("/usr/local/include/eigen3")
+
 # ASSIMP for model loading
-pkg_search_module(ASSIMP REQUIRED assimp)
-include_directories( ${ASSIMP_INLUDE_DIRS} )
+#pkg_search_module(ASSIMP REQUIRED assimp)
+#include_directories( ${ASSIMP_INLUDE_DIRS} )
 
 # Point Cloud Library
-find_package(PCL REQUIRED common kdtree search io)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+#find_package(PCL REQUIRED common kdtree search io)
+#include_directories(${PCL_INCLUDE_DIRS})
+#link_directories(${PCL_LIBRARY_DIRS})
+#add_definitions(${PCL_DEFINITIONS})
 
 set(EXTERNAL_LIBS
     ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
     glfw3 ${GLFW_LIBRARIES}
-    assimp ${ASSIMP_LIBRARIES}
-    ${PCL_COMMON_LIBRARY} 
-    ${PCL_KDTREE_LIBRARY}
-    ${PCL_SEARCH_LIBRARY}
-    ${PCL_IO_LIBRARY}
+    ${GLEW_LIBRARIES}
+    #assimp ${ASSIMP_LIBRARIES}
+    #${PCL_COMMON_LIBRARY} 
+    #${PCL_KDTREE_LIBRARY}
+    #${PCL_SEARCH_LIBRARY}
+    #${PCL_IO_LIBRARY}
 )
 
 #################################################
@@ -55,7 +58,9 @@ set(srcs ${core_source}
 set(incs ${core_header}
          ${util_header})
 
-add_executable(pointcloud_viewer pointcloud_viewer.cpp)
+include_directories(core ui util)
+
+add_executable(pointcloud_viewer ${srcs})
 target_link_libraries(pointcloud_viewer
                       ${EXTERNAL_LIBS} 
 )
