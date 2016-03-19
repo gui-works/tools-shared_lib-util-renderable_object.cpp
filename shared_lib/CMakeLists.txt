@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
 
-project(mapping_tools)
-
 # Find necessary packages
 # OpenGL
 find_package(OpenGL REQUIRED)
@@ -9,12 +7,10 @@ include_directories( ${OPENGL_INCLUDE_DIR} )
 
 # GLEW
 find_package(GLEW REQUIRED)
-include_directories($(GLEW_INCLUDE_DIRS))
 
 # GLFW
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
-include_directories( ${GLFW_INLUDE_DIRS} )
 if(APPLE)
     option(GLFW_USE_RETINA "use retina" ON)
 endif()
@@ -53,14 +49,23 @@ file(GLOB util_header util/*.h)
 file(GLOB exec_source exec/*.cpp)
 set(srcs ${core_source}
          ${util_source}
-         ${ui_source}
          ${exec_source})
 set(incs ${core_header}
          ${util_header})
 
-include_directories(core ui util)
+include_directories(core util)
 
-add_executable(pointcloud_viewer ${srcs})
-target_link_libraries(pointcloud_viewer
+if(TARGET shared_lib)
+
+message("shared_lib is already defined")
+
+else()
+add_library(shared_lib SHARED ${srcs} ${incs})
+target_link_libraries(shared_lib
                       ${EXTERNAL_LIBS} 
 )
+target_include_directories(shared_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/util
+)
+endif()

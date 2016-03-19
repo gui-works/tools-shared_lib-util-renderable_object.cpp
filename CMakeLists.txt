@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2.2)
 
+project(mapping_tools)
+
 SET(CMAKE_BUILD_TYPE Release)
 
 # Check system
@@ -45,4 +47,5 @@ include_directories(pkgs/glm)
 ################################################################################
 ####           SOURCE CODE                                 #####################
 ################################################################################
-add_subdirectory(src)
+add_subdirectory(shared_lib)
+add_subdirectory(exec)
