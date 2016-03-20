@@ -22,6 +22,7 @@ vector<string> split(string &str, char delimiter) {
 void resetBBOX() {
     params::inst().boundBox.bottomLeft = glm::vec3(1e10, 1e10, 1e10);
     params::inst().boundBox.upperRight = glm::vec3(-1e10, -1e10, -1e10);
+    params::inst().boundBox.updated = true;
 }
 
 void updateBBOX(float minX, float maxX, float minY, float maxY, float minZ,

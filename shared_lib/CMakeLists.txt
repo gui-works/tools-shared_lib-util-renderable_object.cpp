@@ -23,20 +23,20 @@ include_directories("/usr/local/include/eigen3")
 #include_directories( ${ASSIMP_INLUDE_DIRS} )
 
 # Point Cloud Library
-#find_package(PCL REQUIRED common kdtree search io)
-#include_directories(${PCL_INCLUDE_DIRS})
-#link_directories(${PCL_LIBRARY_DIRS})
-#add_definitions(${PCL_DEFINITIONS})
+find_package(PCL REQUIRED common kdtree search io)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 set(EXTERNAL_LIBS
     ${OPENGL_LIBRARIES}
     glfw3 ${GLFW_LIBRARIES}
     ${GLEW_LIBRARIES}
     #assimp ${ASSIMP_LIBRARIES}
-    #${PCL_COMMON_LIBRARY} 
-    #${PCL_KDTREE_LIBRARY}
-    #${PCL_SEARCH_LIBRARY}
-    #${PCL_IO_LIBRARY}
+    ${PCL_COMMON_LIBRARY} 
+    ${PCL_KDTREE_LIBRARY}
+    ${PCL_SEARCH_LIBRARY}
+    ${PCL_IO_LIBRARY}
 )
 
 #################################################

@@ -1,4 +1,6 @@
 #include "viewer.h"
+#include <pcl/common/common.h>
+#include <pcl/search/search.h>
 
 vector<bool> Viewer::keys(1024, false);
 Camera* Viewer::camera = nullptr;
@@ -20,6 +22,7 @@ Viewer::Viewer() {
     m_grid.reset(new Grid);
     m_axis.reset(new Axis);
     m_background.reset(new RenderableObject);
+    m_pointVBO.reset(new RenderableObject);
     if (camera == nullptr) {
         camera = new Camera;
     }
@@ -34,6 +37,38 @@ Viewer::~Viewer() {
     if (camera != nullptr) {
         delete camera;
     }
+}
+
+void Viewer::clear() {
+    m_pointData.clear();
+    resetBBOX();
+}
+
+void Viewer::addPointCloud(pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud,
+                           glm::vec4 color) {
+    for (size_t i = 0; i < cloud->size(); ++i) {
+        pcl::PointXYZI& pt = cloud->at(i);
+        m_pointData.push_back(Eigen::Vector3d(pt.x, pt.y, pt.z));
+        m_pointColor.push_back(color);
+    }
+    pcl::PointXYZI min_pt, max_pt;
+    pcl::getMinMax3D(*cloud, min_pt, max_pt);
+    updateBBOX(min_pt.x, max_pt.x, min_pt.y, max_pt.y, min_pt.z, max_pt.z);
+}
+
+void Viewer::updateVBO() {
+    vector<RenderableObject::Vertex> vertexData;
+
+    // Add m_pointData
+    for (size_t i = 0; i < m_pointData.size(); ++i) {
+        RenderableObject::Vertex vpt;
+        vpt.Position = convertToDisplayCoord(
+            m_pointData[i][0], m_pointData[i][1], m_pointData[i][2]);
+        vpt.Color = m_pointColor[i];
+        vertexData.push_back(vpt);
+    }
+
+    m_pointVBO->setData(vertexData, GL_POINTS);
 }
 
 void Viewer::draw() {
@@ -65,6 +100,13 @@ void Viewer::draw() {
         default_shader->setMatrix("matViewProjection",
                                   m_trans.matViewProjection);
         m_grid->render(default_shader);
+
+        // Draw data
+        if (params::inst().boundBox.updated) {
+            updateVBO();
+            params::inst().boundBox.updated = false;
+        }
+        m_pointVBO->render();
 
         // Draw axis
         default_shader->setMatrix("matModel", glm::mat4(1.0f));
